@@ -1,0 +1,65 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 350px;
+  background-color: #202124;
+  color: #e8eaed;
+}
+
+.container {
+  padding: 10px;
+}
+
+h1 {
+  font-size: 18px;
+  margin-top: 0;
+  color: #fff;
+}
+
+#status {
+  font-size: 12px;
+  color: #9aa0a6;
+  min-height: 16px;
+}
+
+#searchInput {
+  width: 95%;
+  padding: 8px;
+  margin-bottom: 10px;
+  background-color: #303134;
+  color: #e8eaed;
+  border: 1px solid #5f6368;
+  border-radius: 4px;
+}
+
+#searchInput::placeholder {
+  color: #9aa0a6;
+}
+
+#results {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.comment {
+  border: 1px solid #3c4043;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 5px;
+  background-color: #303134;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: #8ab4f8;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #e8eaed;
+}
+
+.comment-text mark {
+  background-color: #fdd663;
+  color: #202124;
+  border-radius: 2px;
+}
