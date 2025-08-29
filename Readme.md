@@ -2,6 +2,13 @@
 
 A simple Chrome extension to search through all comments on a YouTube video page. It uses the YouTube Data API v3 to fetch all top-level comments and their replies.
 
+## Usage
+
+1.  **Initial Scan (Fast)**: When you first open the extension on a video page, it performs a fast scan. This quickly loads all top-level comments and the most visible replies provided by the API in the initial request. This is the fastest way to search and is sufficient for most videos.
+
+2.  **Deep Scan (Comprehensive)**: If you need to guarantee that every single nested reply is included in the search, click the **Deep Scan** button in the top-right corner.
+
+    **Warning**: The Deep Scan process can be slow on videos with thousands of comments and will use a significantly higher amount of your API quota, as it must make many additional requests to Google's servers.
 
 ## Setup
 

@@ -6,7 +6,10 @@
 </head>
 <body>
   <div class="container">
-    <h1>Comment Search</h1>
+    <div class="header">
+      <h1>Comment Search</h1>
+      <button id="deepScanButton" title="Fetches all replies for every comment. Can be slow and use more API quota." disabled>Deep Scan</button>
+    </div>
     <p id="status">Initializing...</p>
     <input type="text" id="searchInput" placeholder="Search comments..." disabled>
     <div id="results"></div>
