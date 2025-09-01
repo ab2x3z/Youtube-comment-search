@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const resultsEl = document.getElementById('results');
     const deepScanButton = document.getElementById('deepScanButton');
+    const googleApiKeyRegex = /^AIza[0-9A-Za-z\-_]{35,39}$/;
+
+    if (typeof API_KEY === 'undefined' || !googleApiKeyRegex.test(API_KEY)) {
+        statusEl.textContent = "ERROR: API Key is not set in config.js";
+        searchInput.disabled = true;
+        deepScanButton.disabled = true;
+        return;
+    }
 
     let allComments = [];
     let videoId = null;
@@ -37,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchReplies(parentId) {
         let replies = [];
         let nextPageToken = null;
-        
+
         do {
             const apiUrl = `https://www.googleapis.com/youtube/v3/comments?part=snippet&parentId=${parentId}&key=${API_KEY}&maxResults=100&pageToken=${nextPageToken || ''}`;
             const response = await fetch(apiUrl);
@@ -58,11 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- API Fetching Logic ---
     async function fetchComments(videoId, isDeepScan) {
-        if (!API_KEY || API_KEY === 'YOUR_API_KEY_GOES_HERE') {
-            statusEl.textContent = 'ERROR: API Key is not set in config.js';
-            return;
-        }
-
         // Reset UI for fetching
         allComments = [];
         searchInput.disabled = true;
@@ -84,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const data = await response.json();
-                
+
                 // Process each comment thread
                 for (const item of data.items) {
                     const topLevelComment = item.snippet.topLevelComment;
