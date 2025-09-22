@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (url.hostname === "www.youtube.com" && url.pathname === "/watch") {
             videoId = url.searchParams.get("v");
             if (videoId) {
-                fetchComments(videoId, false);
+                loadCommentsAndState(videoId);
             } else {
                 statusEl.textContent = 'Could not find a video ID on this page.';
             }
@@ -33,10 +33,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Load from session storage or fetch ---
+    function loadCommentsAndState(currentVideoId) {
+        chrome.storage.session.get(['cachedVideoId', 'cachedComments', 'isDeepScanComplete', 'lastSearchQuery'], (data) => {
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message);
+                fetchComments(currentVideoId, false); // Fallback to fetching
+                return;
+            }
+
+            // Check if we have a valid cache for the CURRENT video
+            if (data.cachedVideoId === currentVideoId && data.cachedComments && data.cachedComments.length > 0) {
+                console.log("Loading comments from session cache.");
+                allComments = data.cachedComments;
+
+                // Restore UI state from cache
+                statusEl.textContent = `Ready! Found ${allComments.length} comments.`;
+                searchInput.disabled = false;
+                deepScanButton.disabled = false;
+                searchInput.focus();
+
+                if (data.isDeepScanComplete) {
+                    deepScanButton.textContent = "Scan Complete";
+                    deepScanButton.disabled = true;
+                }
+                
+                // Restore search query and results
+                if (data.lastSearchQuery) {
+                    searchInput.value = data.lastSearchQuery;
+                    // Trigger the 'input' event to perform the search
+                    searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            } else {
+                // No cache for this video, so fetch anew
+                console.log("No valid cache. Fetching comments.");
+                fetchComments(currentVideoId, false);
+            }
+        });
+    }
+
     // --- Event Listener for Deep Scan Button ---
     deepScanButton.addEventListener('click', () => {
         if (videoId) {
             resultsEl.innerHTML = '';
+             // Clear any previous search query as we are starting a new scan
+            searchInput.value = '';
+            chrome.storage.session.set({ lastSearchQuery: '' });
             fetchComments(videoId, true);
         }
     });
@@ -127,6 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 deepScanButton.disabled = true;
             }
 
+            // --- SAVE TO SESSION STORAGE ---
+            chrome.storage.session.set({
+                cachedVideoId: videoId,
+                cachedComments: allComments,
+                isDeepScanComplete: isDeepScan // Save deep scan status
+            }, () => {
+                console.log('Comments and state saved to session.');
+            });
+
         } catch (error) {
             statusEl.textContent = `Error: ${error.message}`;
             console.error(error);
@@ -136,6 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Search ---
     searchInput.addEventListener('input', () => {
         const query = searchInput.value.toLowerCase();
+        
+        // --- SAVE SEARCH QUERY TO SESSION STORAGE ---
+        chrome.storage.session.set({ lastSearchQuery: query });
+
         resultsEl.innerHTML = '';
 
         if (query.length < 2) return;

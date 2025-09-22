@@ -4,7 +4,8 @@
   "version": "1.0",
   "description": "Search all comments on a YouTube video page",
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "host_permissions": [
     "*://www.youtube.com/watch?*",
