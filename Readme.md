@@ -15,11 +15,8 @@ A simple Chrome extension to search through all comments on a YouTube video page
 This extension requires a YouTube Data API v3 key to function.
 
 1.  Obtain an API key from the [Google Cloud Console](https://console.cloud.google.com/). You will need to enable the "YouTube Data API v3" for your project.
-2.  In the root of this project folder, create a new file named `config.js`.
-3.  Add your API key to the file in the following format:
-    ```javascript
-    const API_KEY = 'YOUR_API_KEY_GOES_HERE';
-    ```
+2.  The first time you open the extension on a YouTube video page, it will prompt you for this API key.
+3.  Paste the key into the input field and click "Save Key". The key will be stored securely in your browser's local storage, and you won't need to enter it again unless you choose to change it.
 
 ## Installation
 

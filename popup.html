@@ -5,7 +5,18 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="container">
+  <!-- API Key Setup View (shown if no key is stored) -->
+  <div id="apiKeySetup" class="container" style="display: none;">
+    <h1>API Key Required</h1>
+    <p>Please enter your YouTube Data API v3 key. This is stored locally and never shared.</p>
+    <input type="text" id="apiKeyInput" placeholder="Paste API Key here...">
+    <button id="saveApiKeyButton">Save Key</button>
+    <p id="apiKeyStatus"></p>
+    <p style="font-size: 11px; color: #9aa0a6;">You can get a key from the <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a>.</p>
+  </div>
+
+  <!-- Main App View (shown if key exists) -->
+  <div id="mainContent" class="container" style="display: none;">
     <div class="header">
       <h1>Comment Search</h1>
       <button id="deepScanButton" title="Fetches all replies for every comment. Can be slow and use more API quota." disabled>Deep Scan</button>
@@ -13,8 +24,11 @@
     <p id="status">Initializing...</p>
     <input type="text" id="searchInput" placeholder="Search comments..." disabled>
     <div id="results"></div>
+    <div class="footer">
+      <a href="#" id="changeApiKeyLink">Change API Key</a>
+    </div>
   </div>
-  <script src="config.js"></script>
+  
   <script src="popup.js"></script>
 </body>
 </html>
