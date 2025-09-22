@@ -51,6 +51,11 @@ h1 {
 .comment-author {
   font-weight: bold;
   color: #8ab4f8;
+  text-decoration: none;
+}
+
+.comment-author:hover {
+  text-decoration: underline;
 }
 
 .comment-text {

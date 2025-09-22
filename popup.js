@@ -88,7 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const fetchedReplies = data.items.map(item => ({
                 id: item.id,
                 author: item.snippet.authorDisplayName,
-                textHtml: item.snippet.textDisplay // Store the HTML content
+                textHtml: item.snippet.textDisplay, // Store the HTML content
+                authorChannelUrl: item.snippet.authorChannelUrl
             }));
             replies.push(...fetchedReplies);
             nextPageToken = data.nextPageToken;
@@ -183,7 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         allComments.push({
                             id: topLevelComment.id,
                             author: topLevelComment.snippet.authorDisplayName,
-                            textHtml: topLevelComment.snippet.textDisplay // Store HTML
+                            textHtml: topLevelComment.snippet.textDisplay, // Store HTML
+                            authorChannelUrl: topLevelComment.snippet.authorChannelUrl
                         });
                         commentIds.add(topLevelComment.id);
                         commentCount++;
@@ -193,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         const initialReplies = item.replies.comments.map(reply => ({
                             id: reply.id,
                             author: reply.snippet.authorDisplayName,
-                            textHtml: reply.snippet.textDisplay // Store HTML
+                            textHtml: reply.snippet.textDisplay, // Store HTML
+                            authorChannelUrl: reply.snippet.authorChannelUrl
                         }));
                         
                         for (const reply of initialReplies) {
@@ -302,9 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment';
             
-            const authorEl = document.createElement('div');
+            const authorEl = document.createElement('a');
             authorEl.className = 'comment-author';
             authorEl.textContent = comment.author;
+            authorEl.href = comment.authorChannelUrl;
+            authorEl.target = '_blank';
+            authorEl.rel = 'noopener noreferrer';
             
             const textEl = document.createElement('div');
             textEl.className = 'comment-text';
