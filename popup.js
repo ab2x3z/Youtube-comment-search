@@ -307,33 +307,57 @@ document.addEventListener('DOMContentLoaded', () => {
             return container.innerHTML;
         }
 
+        function createCommentElement(comment, query) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+        
+            const authorEl = document.createElement('a');
+            authorEl.className = 'comment-author';
+            authorEl.textContent = comment.author;
+            authorEl.href = comment.authorChannelUrl;
+            authorEl.target = '_blank';
+            authorEl.rel = 'noopener noreferrer';
+        
+            const textEl = document.createElement('div');
+            textEl.className = 'comment-text';
+            textEl.innerHTML = highlightHtmlString(comment.textHtml, query);
+        
+            commentDiv.appendChild(authorEl);
+            commentDiv.appendChild(textEl);
+        
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'comment-actions';
+        
+            // Link to the comment on YouTube
+            const goToCommentLink = document.createElement('a');
+            goToCommentLink.className = 'go-to-comment-link';
+            goToCommentLink.textContent = 'Go to Comment →';
+            // The link format is videoId + commentId
+            goToCommentLink.href = `https://www.youtube.com/watch?v=${videoId}&lc=${comment.id}`;
+            goToCommentLink.target = '_blank';
+            goToCommentLink.rel = 'noopener noreferrer';
+            
+            // We append the link first, so it appears on the left
+            actionsDiv.appendChild(goToCommentLink);
+        
+            commentDiv.appendChild(actionsDiv);
+            return { commentDiv, actionsDiv };
+        }
+
         function renderComments(threadsToRender, query) {
             resultsEl.innerHTML = '';
             const fragment = document.createDocumentFragment();
             threadsToRender.forEach(thread => {
                 const comment = thread.topLevelComment;
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                const authorEl = document.createElement('a');
-                authorEl.className = 'comment-author';
-                authorEl.textContent = comment.author;
-                authorEl.href = comment.authorChannelUrl;
-                authorEl.target = '_blank';
-                authorEl.rel = 'noopener noreferrer';
-                const textEl = document.createElement('div');
-                textEl.className = 'comment-text';
-                textEl.innerHTML = highlightHtmlString(comment.textHtml, query);
-                commentDiv.appendChild(authorEl);
-                commentDiv.appendChild(textEl);
+                const { commentDiv, actionsDiv } = createCommentElement(comment, query);
+
                 if (thread.totalReplyCount > 0) {
-                    const actionsDiv = document.createElement('div');
-                    actionsDiv.className = 'comment-actions';
                     const repliesBtn = document.createElement('button');
                     repliesBtn.className = 'view-replies-btn';
                     repliesBtn.dataset.commentId = comment.id;
                     repliesBtn.textContent = `View ${thread.totalReplyCount} replies`;
+                    // Append reply button to the right side of the actions container
                     actionsDiv.appendChild(repliesBtn);
-                    commentDiv.appendChild(actionsDiv);
                 }
                 const repliesContainer = document.createElement('div');
                 repliesContainer.className = 'replies-container';
@@ -403,19 +427,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 repliesContainer.innerHTML = '';
                 const query = searchInput.value.trim();
                 thread.replies.forEach(reply => {
-                    const replyDiv = document.createElement('div');
-                    replyDiv.className = 'comment';
-                    const authorEl = document.createElement('a');
-                    authorEl.className = 'comment-author';
-                    authorEl.textContent = reply.author;
-                    authorEl.href = reply.authorChannelUrl;
-                    authorEl.target = '_blank';
-                    const textEl = document.createElement('div');
-                    textEl.className = 'comment-text';
-                    textEl.innerHTML = highlightHtmlString(reply.textHtml, query);
-                    replyDiv.appendChild(authorEl);
-                    replyDiv.appendChild(textEl);
-                    repliesContainer.appendChild(replyDiv);
+                    const { commentDiv } = createCommentElement(reply, query);
+                    repliesContainer.appendChild(commentDiv);
                 });
             }
         });
